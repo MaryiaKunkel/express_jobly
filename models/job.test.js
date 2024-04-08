@@ -1,14 +1,14 @@
 "use strict";
 
 const db = require("../db.js");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError } = require("../expressError.js");
 const Company = require("./company.js");
 const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-} = require("./_testCommon");
+} = require("./_testCommon.js");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
