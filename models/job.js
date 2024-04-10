@@ -14,15 +14,17 @@ class Job {
    * Returns { id, title, salary, equity, companyHandle }
    * */
 
-  static async create({ data }) {
+  static async create(data) {
     const result = await db.query(
-      `INSERT INTO jobs
-           (title, salary, equity, company_handle)
+      `INSERT INTO jobs (title,
+                             salary,
+                             equity,
+                             company_handle)
            VALUES ($1, $2, $3, $4)
            RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
-      [data.title, data.salary, data.equity, data.company_handle]
+      [data.title, data.salary, data.equity, data.companyHandle]
     );
-    const job = result.rows[0];
+    let job = result.rows[0];
 
     return job;
   }
@@ -37,8 +39,8 @@ class Job {
    * Returns [{ id, title, salary, equity, companyHandle, companyName }, ...]
    * */
 
-  static async findAll({ nimSalary, hasEquity, title } = {}) {
-    let query = `SELECT id, title, salary, equity, company_handle AS "companyHandle", name AS "companyName"
+  static async findAll({ minSalary, hasEquity, title } = {}) {
+    let query = `SELECT jobs.id, jobs.title, jobs.salary, jobs.equity, jobs.company_handle AS "companyHandle", companies.name AS "companyName"
                  FROM jobs
                  LEFT JOIN companies ON companies.handle=jobs.company_handle`;
 
@@ -48,16 +50,16 @@ class Job {
     // For each possible search term, add to whereExpressions and queryValues so
     // we can generate the right SQL
 
-    if (nimSalary) {
-      queryValues.push(nimSalary);
+    if (minSalary !== undefined) {
+      queryValues.push(minSalary);
       whereExpressions.push(`salary >= $${queryValues.length}`);
     }
 
-    if (hasEquity) {
+    if (hasEquity === true) {
       whereExpressions.push(`equity > 0`);
     }
 
-    if (title) {
+    if (title !== undefined) {
       queryValues.push(`%${title}%`);
       whereExpressions.push(`title ILIKE $${queryValues.length}`);
     }
