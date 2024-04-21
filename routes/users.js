@@ -46,6 +46,30 @@ router.post("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
   }
 });
 
+/** POST / { user }  => { user, token }
+ *
+ * Allows user to apply for a job (or an admin to do it for them).
+ * That route should return JSON like:
+ * `{ applied: jobId }`
+ *
+ * Authorization required: login
+ **/
+
+router.post(
+  "/:username/jobs/:id",
+  ensureCorrectUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      const jobId = +req.params.id;
+      const username = req.params.username;
+      await User.appluForJob(username, jobId);
+      return res.json({ applied: jobId });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.

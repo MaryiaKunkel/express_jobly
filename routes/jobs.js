@@ -44,7 +44,10 @@ router.post("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
 
 /** GET /  =>
  *   { jobs: [ { title, salary, equity, company_handle }, ...] }
- *
+ * * Can filter on provided search filters:
+ * - title
+ * - minSalary
+ * - hasEquity
  * Authorization required: none
  */
 
@@ -66,10 +69,9 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-/** GET /[handle]  =>  { job }
+/** GET /[id]  =>  { job }
  *
  *  Job is { id, title, salary, equity, company }
- *   where company is { handle, name, description, numEmployees, logoUrl }
  *
  * Authorization required: none
  */
@@ -77,6 +79,7 @@ router.get("/", async function (req, res, next) {
 router.get("/:id", async function (req, res, next) {
   try {
     const job = await Job.get(req.params.id);
+
     return res.json({ job });
   } catch (err) {
     return next(err);

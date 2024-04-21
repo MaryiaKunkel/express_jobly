@@ -50,7 +50,7 @@ async function commonBeforeAll() {
       title: "J2",
       salary: 2,
       equity: "0.2",
-      companyHandle: "c1",
+      companyHandle: "c2",
     })
   ).id;
   testJobIds[2] = (
@@ -58,7 +58,7 @@ async function commonBeforeAll() {
       title: "J3",
       salary: 3,
       equity: null,
-      companyHandle: "c1",
+      companyHandle: "c3",
     })
   ).id;
 
@@ -112,4 +112,5 @@ module.exports = {
   u1Token,
   u2Token,
   adminToken,
+  testJobIds,
 };
