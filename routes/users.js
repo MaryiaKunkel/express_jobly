@@ -95,7 +95,6 @@ router.get("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
 
 router.get(
   "/:username",
-  ensureLoggedIn,
   ensureCorrectUserOrAdmin,
   async function (req, res, next) {
     try {

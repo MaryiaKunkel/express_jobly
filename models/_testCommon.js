@@ -24,7 +24,7 @@ async function commonBeforeAll() {
                   ('Job3', 300, '0', 'c1'),
                   ('Job4', NULL, NULL, 'c1') RETURNING id`);
   testJobIds.splice(0, 0, ...resultJobs.rows.map((r) => r.id));
-  console.log("testJobIds: ", testJobIds);
+  // console.log("testJobIds: ", testJobIds);
 
   await db.query(
     `
@@ -40,6 +40,12 @@ async function commonBeforeAll() {
       await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
       await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
     ]
+  );
+  await db.query(
+    `
+        INSERT INTO applications(username, job_id)
+        VALUES ('u1', $1)`,
+    [testJobIds[0]]
   );
 }
 

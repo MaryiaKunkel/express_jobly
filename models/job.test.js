@@ -186,7 +186,6 @@ describe("findAll", function () {
       let job = await Job.update(testJobIds[0], updateData);
       expect(job).toEqual({
         id: testJobIds[0],
-        handle: "c1",
         companyHandle: "c1",
         ...updateData,
       });
@@ -194,7 +193,7 @@ describe("findAll", function () {
 
     test("not found if no such job", async function () {
       try {
-        await Job.update(testJobIds[0], updateData);
+        await Job.update(0, updateData);
         fail();
       } catch (err) {
         expect(err instanceof NotFoundError).toBeTruthy();
@@ -222,7 +221,7 @@ describe("findAll", function () {
 
     test("not found if no such job", async function () {
       try {
-        await Job.remove(testJobIds[0]);
+        await Job.remove(0);
         fail();
       } catch (err) {
         expect(err instanceof NotFoundError).toBeTruthy();

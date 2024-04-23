@@ -122,6 +122,33 @@ class User {
    * Throws NotFoundError if user not found.
    **/
 
+  static async applyForJob(username, jobId) {
+    let preCheck = await db.query(
+      `SELECT id
+      FROM jobs
+      WHERE id=$1`,
+      [jobId]
+    );
+    const job = preCheck.rows[0];
+
+    if (!job) throw new NotFoundError(`No job: ${jobId}`);
+
+    const preCheck2 = await db.query(
+      `SELECT username
+      FROM users
+      WHERE username=$1`,
+      [username]
+    );
+    const user = preCheck2.rows[0];
+    if (!user) throw new NotFoundError(`No username: ${username}}`);
+
+    await db.query(
+      `INSERT INTO applications (job_id, username)
+      VALUES ($1, $2)`,
+      [jobId, username]
+    );
+  }
+
   static async get(username) {
     const userRes = await db.query(
       `SELECT username,
@@ -144,6 +171,12 @@ class User {
       WHERE applications.username=$1`,
       [username]
     );
+
+    // console.log("userApplicationsRes: ", userApplicationsRes);
+    // console.log(
+    //   "SELECT * FROM applications: ",
+    //   await db.query(`SELECT * FROM applications`)
+    // );
 
     user.applications = userApplicationsRes.rows.map((app) => app.job_id);
     return user;
@@ -208,33 +241,6 @@ class User {
     const user = result.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
-  }
-
-  static async applyForJob(username, jobId) {
-    let preCheck = await db.query(
-      `SELECT id
-      FROM jobs
-      WHERE id=$1`,
-      [jobId]
-    );
-    const job = preCheck.rows[0];
-
-    if (!job) throw new NotFoundError(`No job: ${jobId}`);
-
-    const preCheck2 = await db.query(
-      `SELECT username
-      FROM users
-      WHERE username=$1`,
-      [username]
-    );
-    const user = preCheck2.rows[0];
-    if (!user) throw new NotFoundError(`No username: ${username}}`);
-
-    await db.query(
-      `INSERT INTO applications (job_id, username)
-      VALUES ($1, $2)`,
-      [jobId, username]
-    );
   }
 }
 
